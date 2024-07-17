@@ -1,14 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
-const CustomerForm = () => {
-    const [name, setName] = useState();
-    const [email, setEmail] = useState();
-    const [phone, setPhone] = useState();
-    const [username, setUsername] = useState();
-    const [password, setPassword] = useState();
-    const [errors, setErrors] = useState();
+const CustomerForm = ({ inputCustomerId }) => {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [errors, setErrors] = useState({
+        "name": "",
+        "email": "",
+        "phone": "",
+        "username": "",
+        "password": ""
+    });
+    const [selectedCustomerID, setSelectedCustomerId] = useState();
+    
+    const navigate = useNavigate();
+
+    useEffect((inputCustomerId) => {
+        setSelectedCustomerId(inputCustomerId)
+    }, [selectedCustomerID])
 
     const handleChange = (event) => {
         const {name, value} = event.target;
@@ -79,6 +92,7 @@ const CustomerForm = () => {
                 }    
             }
             placeCustomer();
+            navigate('/customers/show')
         } else {
             setErrors(errors);
         }
@@ -86,36 +100,41 @@ const CustomerForm = () => {
 
     return (
         <>
-            {/* {selectedCustomerID ? (
-                <h1>Edit Customer</h1>
+            {selectedCustomerID ? (
+                <h2>Edit Customer</h2>
             ) : (
-                <h1>Add Customer</h1>
-            )} */}
+                <h2>Add Customer</h2>
+            )}
             <form onSubmit={handleSubmit}>
                 <label>
                     Name:
                     <input type='text' name='name' value={name} onChange={handleChange}/>
                 </label>
+                {errors.name && <div style={{ color: 'red'}}>{errors.name}</div>}
                 <br />
                 <label>
                     Email:
                     <input type='email' name='email' value={email} onChange={handleChange}/>
                 </label>
+                {errors.email && <div style={{ color: 'red'}}>{errors.email}</div>}
                 <br />
                 <label>
                     Phone:
                     <input type='tel' name='phone' value={phone} onChange={handleChange}/>
                 </label>
                 <br />
+                {errors.phone && <div style={{ color: 'red'}}>{errors.phone}</div>}
                 <label>
                     Username:
                     <input type='text' name='username' value={username} onChange={handleChange}/>
                 </label>
+                {errors.username && <div style={{ color: 'red'}}>{errors.username}</div>}
                 <br />
                 <label>
                     Password:
                     <input type='text' name='password' value={password} onChange={handleChange}/>
                 </label>
+                {errors.password && <div style={{ color: 'red'}}>{errors.password}</div>}
                 <br />
                 <button type='submit'>Submit</button>
             </form>
