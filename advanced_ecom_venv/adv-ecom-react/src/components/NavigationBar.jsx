@@ -5,8 +5,8 @@ import '../NavigationBar.css'
 const NavigationBar = () => {
     return (
         <nav>
-            <NavLink to='/' activeClassName='active'>Home</NavLink>
-            <NavLink to='/customers' activeClassName='active'>Customers</NavLink>
+            <NavLink to='/' activeclassname='active'>Home</NavLink>
+            <NavLink to='/customers' activeclassname='active'>Customers</NavLink>
         </nav>
     );
 };
