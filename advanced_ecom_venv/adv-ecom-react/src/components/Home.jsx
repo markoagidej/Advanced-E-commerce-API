@@ -4,7 +4,7 @@ import { Container } from 'react-bootstrap';
 const Home = () => {
     return (
         <Container>
-            poop
+            <p>Get on with it, select a page!</p>
         </Container>
     );
 };

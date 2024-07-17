@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { Routes, Route } from 'react-router-dom'
 
@@ -10,13 +10,18 @@ import CustomerForm from './components/CustomerForm'
 const App = () => {
   const [selectedCustomerID, setCustomerID] = useState()
 
+  const handleCustomerSelect = (customerId) => {
+    setCustomerID(customerId)
+  }
+
   return (
     <>
       <NavigationBar />
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/customers' element={<CustomerList />} />
+        <Route path='/customers/show' element={<CustomerList onCustomerSelect={handleCustomerSelect}/>} />
         <Route path='/customers/form' element={<CustomerForm />} />
+        <Route path='/customers/form/:id' element={<CustomerForm customerId={selectedCustomerID}/>} />
       </Routes>
     </>
   )

@@ -7,7 +7,7 @@ from flask_cors import CORS
 
 db_password = password
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://root:{db_password}@localhost/e_commerce_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://root:{db_password}@localhost/advanced_e_commerce_db'
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 CORS(app)
@@ -185,7 +185,7 @@ def update_cusomter_account(id):
     customer_account.password = account_data['password']
     db.session.commit()
 
-    return jsonify({"message": "Customer updated sucesfully"}), 200
+    return jsonify({"message": "Customer account updated sucesfully"}), 200
 
 # Delete Customer Account by id
 @app.route("/customer_accounts/<int:id>", methods=["DELETE"])
@@ -194,7 +194,7 @@ def delete_customer_account(id):
     db.session.delete(customer_account)
     db.session.commit()
 
-    return jsonify({"message": "Customer removed sucesfully"}), 200
+    return jsonify({"message": "Customer account removed sucesfully"}), 200
 
 ## Products ----------------------------------------------------------------------------------------------------------------------------
 # Get all products

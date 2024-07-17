@@ -6,7 +6,8 @@ const NavigationBar = () => {
     return (
         <nav>
             <NavLink to='/' activeclassname='active'>Home</NavLink>
-            <NavLink to='/customers' activeclassname='active'>Customers</NavLink>
+            <NavLink to='/customers/show' activeclassname='active'>Customers List</NavLink>
+            <NavLink to='/customers/form' activeclassname='active'>Customer Editing</NavLink>
         </nav>
     );
 };
