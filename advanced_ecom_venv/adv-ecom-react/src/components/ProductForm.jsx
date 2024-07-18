@@ -10,13 +10,13 @@ const ProductForm = ({ productId }) => {
         "name": "",
         "price": ""
     });
-    const [selectedProductId, setselectedProductId] = useState();
+    const [selectedProductId, setSelectedProductId] = useState();
     const [showSuccessModal, setShowSuccessModal] = useState(false)
     
     const navigate = useNavigate();
 
     useEffect(() => {
-        setselectedProductId(productId)
+        setSelectedProductId(productId)
         if (productId) {
             try {                
                 async function setProductFields(productId) {

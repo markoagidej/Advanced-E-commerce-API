@@ -16,13 +16,13 @@ const CustomerForm = ({ customerId }) => {
         "username": "",
         "password": ""
     });
-    const [selectedCustomerId, setselectedCustomerId] = useState();
+    const [selectedCustomerId, setSelectedCustomerId] = useState();
     const [showSuccessModal, setShowSuccessModal] = useState(false)
     
     const navigate = useNavigate();
 
     useEffect(() => {
-        setselectedCustomerId(customerId)
+        setSelectedCustomerId(customerId)
         if (customerId) {
             try {                
                 async function setCustomerFields(customerId) {

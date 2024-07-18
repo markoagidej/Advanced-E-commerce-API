@@ -10,6 +10,8 @@ const NavigationBar = () => {
             <NavLink to='/customers/form' activeclassname='active'>Customer Editing</NavLink>
             <NavLink to='/products/show' activeclassname='active'>Products List</NavLink>
             <NavLink to='/products/form' activeclassname='active'>Product Editing</NavLink>
+            <NavLink to='/orders/show' activeclassname='active'>Orders</NavLink>
+            <NavLink to='/orders/form' activeclassname='active'>Place Order</NavLink>
         </nav>
     );
 };

@@ -266,6 +266,12 @@ def place_order():
 
     return jsonify({"message": "New order placed"}), 201
 
+# Get all orders
+@app.route('/orders', methods=['GET'])
+def get_orders():
+    orders = Order.query.all()
+    return orders_schema.jsonify(orders)
+
 # Retrieving order
 @app.route("/orders/<int:id>", methods=["GET"])
 def get_order_details(id):

@@ -6,7 +6,7 @@ import { Container, ListGroup, Button, Modal } from 'react-bootstrap';
 const CustomerList = ({ onCustomerSelect }) => {
     const navigate = useNavigate();
     const [customerList, setCustomerList] = useState([])
-    const [selectedCustomerId, setselectedCustomerId] = useState()
+    const [selectedCustomerId, setSelectedCustomerId] = useState()
     const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false)
     
     async function fetchCustomerList() {
@@ -23,7 +23,7 @@ const CustomerList = ({ onCustomerSelect }) => {
     }, [])
 
     const selectCustomerID = (id) => {
-        setselectedCustomerId(id)
+        setSelectedCustomerId(id)
         onCustomerSelect(id)
         navigate(`/customers/form/${id}`)
     }
@@ -90,7 +90,7 @@ const CustomerList = ({ onCustomerSelect }) => {
                     The customer has been successfully deleted.
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant='secondary' onClick={closeModal}>Close</Button>
+                    <Button variant='senondary' onClick={closeModal}>Close</Button>
                 </Modal.Footer>
             </Modal>
         </Container>
