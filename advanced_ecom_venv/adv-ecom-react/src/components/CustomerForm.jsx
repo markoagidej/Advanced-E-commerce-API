@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { Container, ListGroup, Button, Modal, Form } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { Container, Button, Modal, Form } from 'react-bootstrap';
 
 const CustomerForm = ({ customerId }) => {
     const [name, setName] = useState('');
@@ -17,6 +17,7 @@ const CustomerForm = ({ customerId }) => {
         "password": ""
     });
     const [selectedCustomerId, setselectedCustomerId] = useState();
+    const [showSuccessModal, setShowSuccessModal] = useState(false)
     
     const navigate = useNavigate();
 
@@ -156,8 +157,13 @@ const CustomerForm = ({ customerId }) => {
         }
     };
 
+    const closeModal = () => {
+        setShowSuccessModal(false)
+        navigate('/customers/show')
+    }
+
     return (
-        <>
+        <Container>
             {selectedCustomerId ? (
                 <h2>Edit Customer</h2>
             ) : (
@@ -196,7 +202,24 @@ const CustomerForm = ({ customerId }) => {
                 <br />
                 <Button type='submit'>Submit</Button>
             </Form>
-        </>
+            <Modal show={showSuccessModal} onHide={closeModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        {customerId ? ("Updated!") : ("Added")}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {customerId ? (
+                        "The customer has been successfully updated."
+                    ) : (
+                        "The customer has been successfully added."
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant='secondary' onClick={closeModal}>Close</Button>
+                </Modal.Footer>
+            </Modal>
+        </Container>
     )
 }
 
