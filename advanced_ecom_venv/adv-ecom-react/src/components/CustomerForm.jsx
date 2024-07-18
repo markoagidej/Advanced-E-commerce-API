@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { Container, ListGroup, Button, Modal, Form } from 'react-bootstrap';
 
 const CustomerForm = ({ customerId }) => {
     const [name, setName] = useState('');
@@ -150,8 +151,6 @@ const CustomerForm = ({ customerId }) => {
             }
 
             selectedCustomerId ?  updateCustomer() : placeCustomer();
-
-            navigate('/customers/show');
         } else {
             setErrors(errors);
         }
@@ -164,7 +163,7 @@ const CustomerForm = ({ customerId }) => {
             ) : (
                 <h2>Add Customer</h2>
             )}
-            <form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit}>
                 <label>
                     Name:
                     <input type='text' name='name' value={name} onChange={handleChange}/>
@@ -195,8 +194,8 @@ const CustomerForm = ({ customerId }) => {
                 </label>
                 {errors.password && <div style={{ color: 'red'}}>{errors.password}</div>}
                 <br />
-                <button type='submit'>Submit</button>
-            </form>
+                <Button type='submit'>Submit</Button>
+            </Form>
         </>
     )
 }

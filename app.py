@@ -187,10 +187,10 @@ def update_cusomter_account(id):
 
     return jsonify({"message": "Customer account updated sucesfully"}), 200
 
-# Delete Customer Account by id
+# Delete Customer Account by customer id
 @app.route("/customer_accounts/<int:id>", methods=["DELETE"])
 def delete_customer_account(id):
-    customer_account = CustomerAccount.query.get_or_404(id)
+    customer_account = CustomerAccount.query.filter(CustomerAccount.customer_id == id).first()
     db.session.delete(customer_account)
     db.session.commit()
 

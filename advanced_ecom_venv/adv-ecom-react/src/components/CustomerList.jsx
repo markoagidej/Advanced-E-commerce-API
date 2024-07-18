@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Container, ListGroup, Button, Modal } from 'react-bootstrap';
 
 const CustomerList = ({ onCustomerSelect }) => {
     const navigate = useNavigate();
     const [customerList, setCustomerList] = useState([])
     const [selectedCustomerId, setselectedCustomerId] = useState()
+    const [showDeleteSuccessModal, setShowDeleteSuccessModal] = useState(false)
     
     async function fetchCustomerList() {
         try {                
@@ -26,11 +28,11 @@ const CustomerList = ({ onCustomerSelect }) => {
         navigate(`/customers/form/${id}`)
     }
 
-    const deleteCustomer = (id) => {
+    const deleteCustomer = async (id) => {
         try {
             let accountId = ''
             // Getting account id via customer id before deleting customer
-            axios.get(`http://127.0.0.1:5000/customer_accounts/${id}`)
+            await axios.get(`http://127.0.0.1:5000/customer_accounts/${id}`)
             .then(response => {
                 accountId = response.data.id
             })
@@ -39,7 +41,7 @@ const CustomerList = ({ onCustomerSelect }) => {
             })
 
             // Delete from Customers
-            axios.delete(`http://127.0.0.1:5000/customers/${id}`)
+            await axios.delete(`http://127.0.0.1:5000/customers/${id}`)
             .then(response => {
                 console.log("Customer deleted from Customer Table", response.data)
             })
@@ -48,7 +50,7 @@ const CustomerList = ({ onCustomerSelect }) => {
             })
 
             // Delete from Customer Accounts from gotten id of customer account via customer_id above
-            axios.delete(`http://127.0.0.1:5000/customer_accounts/${accountId}`)
+            await axios.delete(`http://127.0.0.1:5000/customer_accounts/${accountId}`)
             .then(response => {
                 console.log("Customer deleted from Customer Account Table", response.data)
             })
@@ -56,6 +58,7 @@ const CustomerList = ({ onCustomerSelect }) => {
                 console.error("Error deleting customer from customer list:", error);
             })
 
+            setShowDeleteSuccessModal(true)
             // Refresh customer list display
         } catch (error) {            
             console.error("Error deleting Customer:", error);
@@ -63,18 +66,34 @@ const CustomerList = ({ onCustomerSelect }) => {
         fetchCustomerList()
     }
 
+    const closeModal = () => {
+        setShowDeleteSuccessModal(false)
+        navigate('/customers/show')
+    }
+
     return (
-        <div>
+        <Container>
             <h2>List of Customers:</h2>
-            <ul>
+            <ListGroup>
                 {customerList.map((customer, index) => (
-                    <li key={index}>
+                    <ListGroup.Item key={index}>
                         <h4 onClick={() => selectCustomerID(customer.id)}>{customer.name}</h4>
-                        <button onClick={() => deleteCustomer(customer.id)}>Delete</button>
-                    </li>
+                        <Button onClick={() => deleteCustomer(customer.id)}>Delete</Button>
+                    </ListGroup.Item>
                 ))}
-            </ul>
-        </div>
+            </ListGroup>
+            <Modal show={showDeleteSuccessModal} onHide={closeModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Deleted!</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    The customer has been successfully deleted.
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant='secondary' onClick={closeModal}>Close</Button>
+                </Modal.Footer>
+            </Modal>
+        </Container>
     )
 }
 
