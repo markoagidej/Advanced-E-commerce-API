@@ -152,6 +152,7 @@ const CustomerForm = ({ customerId }) => {
             }
 
             selectedCustomerId ?  updateCustomer() : placeCustomer();
+            setShowSuccessModal(true)
         } else {
             setErrors(errors);
         }
