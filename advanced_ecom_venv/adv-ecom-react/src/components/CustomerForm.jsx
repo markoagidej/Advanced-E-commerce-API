@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-const CustomerForm = ({ inputCustomerId }) => {
+const CustomerForm = ({ customerId }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
@@ -15,13 +15,32 @@ const CustomerForm = ({ inputCustomerId }) => {
         "username": "",
         "password": ""
     });
-    const [selectedCustomerID, setSelectedCustomerId] = useState();
+    const [selectedCustomerId, setselectedCustomerId] = useState();
     
     const navigate = useNavigate();
 
-    useEffect((inputCustomerId) => {
-        setSelectedCustomerId(inputCustomerId)
-    }, [selectedCustomerID])
+    useEffect(() => {
+        setselectedCustomerId(customerId)
+        if (customerId) {
+            try {                
+                async function setCustomerFields(customerId) {
+                    const customerResponse = await axios.get(`http://127.0.0.1:5000/customers/${customerId}`)
+                    const customerData = await customerResponse.data
+                    setName(customerData.name)
+                    setEmail(customerData.email)
+                    setPhone(customerData.phone)
+
+                    const accountResponse = await axios.get(`http://127.0.0.1:5000/customer_accounts/${customerId}`)
+                    const accountData = await accountResponse.data
+                    setUsername(accountData.username)
+                    setPassword(accountData.password)
+                }
+                setCustomerFields(customerId)
+            } catch (error) {
+                console.error("Problem setting state variables from drilled customerId:", error)
+            }
+        }
+    }, [])
 
     const handleChange = (event) => {
         const {name, value} = event.target;
@@ -68,10 +87,10 @@ const CustomerForm = ({ inputCustomerId }) => {
                 try {
                     await axios.post('http://127.0.0.1:5000/customers', customerData)
                     .then(response => {
-                        console.log("Data successfully submitted", response.data);
+                        console.log("Customer Data successfully submitted", response.data);
                     })
                     .catch(error => {
-                        console.error("There was an error submitting customer form:", error)
+                        console.error("There was an error posting to customers from form:", error)
                     })
         
                     // Add customer account via some get request to get customer id of newly created customer
@@ -80,19 +99,59 @@ const CustomerForm = ({ inputCustomerId }) => {
                     const newCustomerId = await response.data[lastIndex].id
                     customerAccountData.customer_id = await newCustomerId
         
-                    axios.post('http://127.0.0.1:5000/customer_accounts', customerAccountData)
+                    await axios.post('http://127.0.0.1:5000/customer_accounts', customerAccountData)
                     .then(response => {
-                        console.log("Data successfully submitted", response.data);
+                        console.log("Customer account Data successfully submitted", response.data);
                     })
                     .catch(error => {
-                        console.error("There was an error submitting customer form:", error)
+                        console.error("There was an error posting to customer accounts from form:", error)
                     })
+
+                    console.log("Customer and account inserted successfully")
                 } catch (error) {
                     console.error("Issue adding new customer", error)
                 }    
             }
-            placeCustomer();
-            navigate('/customers/show')
+
+            const updateCustomer = async () => {                
+                let accountId = ''
+                try {
+                    // Getting account id via customer id before updating
+                    await axios.get(`http://127.0.0.1:5000/customer_accounts/${selectedCustomerId}`)
+                    .then(response => {
+                        accountId = response.data.id
+                    })
+                    .catch(error => {
+                        console.error("Error getting account id by customer id", error)
+                    })
+
+                    // Updating Customer Table
+                    await axios.put(`http://127.0.0.1:5000/customers/${selectedCustomerId}`, customerData)
+                    .then(response => {
+                        console.log("Customer Data successfully updated", response.data);
+                    })
+                    .catch(error => {
+                        console.error("There was an error updating customers form:", error)
+                    })
+        
+                    // Updating Customer Account Table
+                    await axios.put(`http://127.0.0.1:5000/customer_accounts/${accountId}`, customerAccountData)
+                    .then(response => {
+                        console.log("Customer account successfully updated", response.data);
+                    })
+                    .catch(error => {
+                        console.error("There was an error updating customer accounts from form:", error)
+                    })
+                    
+                    console.log("Customer and account updated successfully")
+                } catch (error) {
+                    console.error("Issue updating customer", error)
+                } 
+            }
+
+            selectedCustomerId ?  updateCustomer() : placeCustomer();
+
+            navigate('/customers/show');
         } else {
             setErrors(errors);
         }
@@ -100,7 +159,7 @@ const CustomerForm = ({ inputCustomerId }) => {
 
     return (
         <>
-            {selectedCustomerID ? (
+            {selectedCustomerId ? (
                 <h2>Edit Customer</h2>
             ) : (
                 <h2>Add Customer</h2>

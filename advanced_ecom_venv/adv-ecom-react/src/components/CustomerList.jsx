@@ -28,7 +28,7 @@ const CustomerList = ({ onCustomerSelect }) => {
 
     const deleteCustomer = (id) => {
         try {
-            const accountId = ''
+            let accountId = ''
             // Getting account id via customer id before deleting customer
             axios.get(`http://127.0.0.1:5000/customer_accounts/${id}`)
             .then(response => {
