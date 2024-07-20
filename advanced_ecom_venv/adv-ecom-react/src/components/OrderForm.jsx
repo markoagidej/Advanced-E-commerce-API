@@ -13,16 +13,16 @@ const OrderForm = ({ orderId }) => {
         "customer_id": "",
         "productList": []
     });
-    const [selectedOrderId, setSelectedOrderId] = useState();
+    const [selectedOrderId, setSelectedOrder] = useState();
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [showProductModal, setShowProductModal] = useState(false);
     
     const navigate = useNavigate();
 
     useEffect(() => {
-        setSelectedOrderId(orderId)
         // Setting Order ID
         if (orderId) {
+            setSelectedOrder(orderId)
             async function setOrderFields(orderId) {
                 const orderResponse = await axios.get(`http://127.0.0.1:5000/orders/${orderId}`)
                 const orderData = await orderResponse.data
@@ -97,7 +97,7 @@ const OrderForm = ({ orderId }) => {
                         console.error("There was an error posting to orders from form:", error)
                     })
 
-                    console.log("Order and account inserted successfully")
+                    console.log("Order inserted successfully")
                 } catch (error) {
                     console.error("Issue adding new order", error)
                 }    
@@ -114,7 +114,7 @@ const OrderForm = ({ orderId }) => {
                         console.error("There was an error updating orders form:", error)
                     })
                     
-                    console.log("Order and account updated successfully")
+                    console.log("Order updated successfully")
                 } catch (error) {
                     console.error("Issue updating order", error)
                 } 
@@ -149,12 +149,17 @@ const OrderForm = ({ orderId }) => {
                 <h2>Add Order</h2>
             )}
             <Form onSubmit={handleSubmit}>
+                {date &&
+                    <div>
+                        Date ordered: {date}
+                    </div>
+                }
                 <label>
                     Customer:
                         <Form.Select aria-label="Select Customer">
                             <option>Select Customer</option>
-                            {customerList.map((customer) => (
-                                <option value={customer.id}>
+                            {customerList.map((customer, index) => (
+                                <option key={index} value={customer.id}>
                                     {customer.name}
                                 </option>
                             ))}
@@ -164,8 +169,8 @@ const OrderForm = ({ orderId }) => {
                 <br />
                 <label>
                     Products:
-                    {productInOrder.map((product) => (
-                        <div>{product.name}: {product.price}</div>
+                    {productInOrder.map((product, index) => (
+                        <div key={index}>{product.name}: {product.price}</div>
                     ))}
                 </label>
                 <br />
@@ -184,8 +189,8 @@ const OrderForm = ({ orderId }) => {
                 <Modal.Body>
                     <Form.Select aria-label="Select Product">
                         <option>Select Product</option>
-                        {productList.map((product) => (
-                            <option value={product.id}>{product.name}: ${product.price}</option>
+                        {productList.map((product, index) => (
+                            <option key={index} value={product.id}>{product.name}: ${product.price}</option>
                         ))}
                     </Form.Select>
                 </Modal.Body>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { Routes, Route } from 'react-router-dom'
 
@@ -14,6 +14,7 @@ import OrderForm from './components/OrderForm'
 const App = () => {
   const [selectedCustomerID, setCustomerID] = useState()
   const [selectedProductID, setProductID] = useState()
+  const [selectedOrderID, setOrderID] = useState()
 
   const handleCustomerSelect = (customerId) => {
     setCustomerID(customerId)
@@ -22,6 +23,13 @@ const App = () => {
   const handleProductSelect = (productId) => {
     setProductID(productId)
   }
+
+  const handleOrderSelect = (orderId) => {
+    setOrderID(orderId)
+  }
+
+  useEffect(() => {
+  },[selectedOrderID])
 
   return (
     <>
@@ -37,9 +45,9 @@ const App = () => {
         <Route path='/products/form' element={<ProductForm />} />
         <Route path='/products/form/:id' element={<ProductForm productId={selectedProductID}/>} />
 
-        <Route path='/orders/show' element={<OrderList />} />
-        <Route path='/orders/form' element={<OrderForm productId={selectedProductID}/>} />
-        <Route path='/orders/form/:id' element={<OrderForm productId={selectedProductID}/>} />
+        <Route path='/orders/show' element={<OrderList onOrderSelect={handleOrderSelect}/>} />
+        <Route path='/orders/form' element={<OrderForm />} />
+        <Route path='/orders/form/:id' element={<OrderForm orderId={selectedOrderID}/>} />
       </Routes>
     </>
   )
