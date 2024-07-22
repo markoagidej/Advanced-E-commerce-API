@@ -6,6 +6,7 @@ import { Container, Button, Modal, Form, Dropdown } from 'react-bootstrap';
 const OrderForm = ({ orderId }) => {
     const [date, setDate] = useState('');
     const [customer_id, setCustomer_id] = useState('');
+    const [customerName, setCustomerName] = useState('');
     const [productList, setProductList] = useState([]);
     const [customerList, setCustomerList] = useState([]);
     const [productInOrder, setProductInOrder] = useState([]);
@@ -20,22 +21,6 @@ const OrderForm = ({ orderId }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Setting Order ID
-        if (orderId) {
-            setSelectedOrder(orderId)
-            async function setOrderFields(orderId) {
-                const orderResponse = await axios.get(`http://127.0.0.1:5000/orders/${orderId}`)
-                const orderData = await orderResponse.data
-                setDate(orderData.date)
-                setCustomer_id(orderData.customer_id)
-            }
-            try {
-                setOrderFields(orderId)
-            } catch (error) {
-                console.error("Problem setting state variables from drilled orderId:", error)
-            }
-        }
-
         // Getting product data to add to order from.
         async function getProductList() {
             const productResponse = await axios.get(`http://127.0.0.1:5000/products`)
@@ -47,19 +32,48 @@ const OrderForm = ({ orderId }) => {
             const customerResponse = await axios.get(`http://127.0.0.1:5000/customers`)
             const customers = await customerResponse.data
             setCustomerList(customers)
+        }        
+        // Gets Customer name from Order.customer_id referenced against customerList
+        async function getCustomerName(customerId) {
+            customerList.forEach(customer => {
+                console.log((customer.id == customerId),customer.id, customerId)
+                if (customerId == customer.id) {
+                    console.log(customer.name)
+                    return customer.name
+                }
+            });
         }
-        
-        try {
+
+        try {            
             getProductList()
             getCustomerList()
         } catch (error) {
-            console.error("Problem setting state variables from drilled orderId:", error)
+            console.error("Problem getting Customer or Product List", error)
         }
+
+        if (orderId) {
+            setSelectedOrder(orderId)
+            async function setOrderFields(orderId) {
+                const orderResponse = await axios.get(`http://127.0.0.1:5000/orders/${orderId}`)
+                const orderData = await orderResponse.data
+                setDate(await orderData.date)
+                const customerId = await orderData.customer_id
+                setCustomer_id(await customerId)
+                setCustomerName(await getCustomerName(customerId))
+            }
+            
+            try {
+                setOrderFields(orderId)
+            } catch (error) {
+                console.error("Problem setting state variables from drilled orderId:", error)
+            }
+        }
+        console.log(customerName)
     }, [])
 
     useEffect(() => {
 
-    }, [customerList])
+    }, [customerName])
 
     // const handleChange = (event) => {
     //     const {name, value} = event.target;
@@ -154,10 +168,18 @@ const OrderForm = ({ orderId }) => {
                         Date ordered: {date}
                     </div>
                 }
-                <label>
-                    Customer:
+                <label>                    
+                    {customerName ? (
+                        <h3>Customer: {customerName}</h3>
+                    ) : (
+                        <h3>Customer:</h3>
+                    )}
                         <Form.Select aria-label="Select Customer">
-                            <option>Select Customer</option>
+                            {selectedOrderId ? (
+                                <option>Change Customer</option>
+                            ) : (
+                                <option>Select Customer</option>
+                            )}
                             {customerList.map((customer, index) => (
                                 <option key={index} value={customer.id}>
                                     {customer.name}
