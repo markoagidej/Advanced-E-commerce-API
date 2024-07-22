@@ -4,7 +4,7 @@ import { Routes, Route } from 'react-router-dom'
 
 import Home from './components/Home'
 import NavigationBar from './components/NavigationBar'
-import CustomerList from './components/CustomerList'
+import CustomerList from './components/Customerlist'
 import CustomerForm from './components/CustomerForm'
 import ProductList from './components/ProductList'
 import ProductForm from './components/ProductForm'
