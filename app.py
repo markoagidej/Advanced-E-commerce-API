@@ -145,16 +145,6 @@ def delete_customer(id):
 
     return jsonify({"message": "Customer removed sucesfully"}), 200
 
-
-# Delete Customer Account by customer id
-@app.route("/customer_accounts/<int:accountId>", methods=["DELETE"])
-def delete_customer_account(accountId):
-    customer_account = CustomerAccount.query.get_or_404(accountId)
-    db.session.delete(customer_account)
-    db.session.commit()
-
-    return jsonify({"message": "Customer account removed sucesfully"}), 200
-
 ## Customer Accounts ----------------------------------------------------------------------------------------------------------------------------
 # Get all customer accounts
 @app.route('/customer_accounts', methods=['GET'])
@@ -198,13 +188,13 @@ def update_cusomter_account(id):
     return jsonify({"message": "Customer account updated sucesfully"}), 200
 
 # Delete Customer Account by customer id
-# @app.route("/customer_accounts/<int:id>", methods=["DELETE"])
-# def delete_customer_account(id):
-#     customer_account = CustomerAccount.query.filter(CustomerAccount.customer_id == id).first()
-#     db.session.delete(customer_account)
-#     db.session.commit()
+@app.route("/customer_accounts/<int:accountId>", methods=["DELETE"])
+def delete_customer_account(accountId):
+    customer_account = CustomerAccount.query.get_or_404(accountId)
+    db.session.delete(customer_account)
+    db.session.commit()
 
-#     return jsonify({"message": "Customer account removed sucesfully"}), 200
+    return jsonify({"message": "Customer account removed sucesfully"}), 200
 
 ## Products ----------------------------------------------------------------------------------------------------------------------------
 # Get all products
