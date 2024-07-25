@@ -41,7 +41,9 @@ const OrderForm = ({ orderId }) => {
         } catch (error) {
             console.error("Problem getting Customer or Product List", error);
         }
+    }, []);
 
+    useEffect(() => {
         if (orderId) {
             setSelectedOrder(orderId);
             async function setOrderFields(orderId) {
@@ -49,9 +51,9 @@ const OrderForm = ({ orderId }) => {
                 const orderData = await orderResponse.data;
                 setDate(await orderData.date);
                 const customerId = await orderData.customer_id;
-                setCustomer_id(await customerId);
+                setCustomer_id(await orderData.customer.id);
                 // Get customer name using the customer ID
-                const customerName = await getCustomerName(customerId);
+                const customerName = await orderData.customer.name;
                 setCustomerName(customerName);
             }
     
@@ -61,17 +63,13 @@ const OrderForm = ({ orderId }) => {
                 console.error("Problem setting state variables from drilled orderId:", error);
             }
         }
-    }, [orderId, customerList]);
-
-    useEffect(() => {
-
-    }, [customerName])
+    }, [customerList])
     
     // Gets Customer name from Order.customer_id referenced against customerList
-    async function getCustomerName(customerId) {
-        const customer = customerList.find(customer => customer.id === customerId);
-        return customer ? customer.name : '';
-    }
+    // async function getCustomerName(customerId) {
+    //     const customer = customerList.find(customer => customer.id === customerId);
+    //     return customer ? customer.name : '';
+    // }
 
     // const handleChange = (event) => {
     //     const {name, value} = event.target;
