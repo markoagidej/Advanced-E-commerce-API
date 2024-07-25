@@ -35,12 +35,20 @@ class ProductSchema(ma.Schema):
     class Meta:
         fields = ("name", "price", "id")
 
+# class OrderSchema(ma.Schema):
+#     customer_id = fields.Integer(required=True)
+#     date = fields.Date(required=True)
+
+#     class Meta:
+#         fields = ("customer_id", "date", "order_items", "id")
+
 class OrderSchema(ma.Schema):
-    customer_id = fields.Integer(required=True)
+    customer = fields.Nested(CustomerSchema)
     date = fields.Date(required=True)
+    order_items = fields.List(fields.Integer())
 
     class Meta:
-        fields = ("customer_id", "date", "order_items", "id")
+        fields = ("id", "customer", "date", "order_items")
 
 # Instance creation of Schemas
 customer_schema = CustomerSchema()

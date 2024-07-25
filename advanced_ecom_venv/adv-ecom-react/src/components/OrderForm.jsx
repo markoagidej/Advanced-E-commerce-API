@@ -23,57 +23,55 @@ const OrderForm = ({ orderId }) => {
     useEffect(() => {
         // Getting product data to add to order from.
         async function getProductList() {
-            const productResponse = await axios.get(`http://127.0.0.1:5000/products`)
-            const products = await productResponse.data
-            setProductList(products)
+            const productResponse = await axios.get(`http://127.0.0.1:5000/products`);
+            const products = await productResponse.data;
+            setProductList(products);
         }
+        
         // Getting customer data to add to order from.
         async function getCustomerList() {
-            const customerResponse = await axios.get(`http://127.0.0.1:5000/customers`)
-            const customers = await customerResponse.data
-            setCustomerList(customers)
-        }        
-        // Gets Customer name from Order.customer_id referenced against customerList
-        async function getCustomerName(customerId) {
-            customerList.forEach(customer => {
-                console.log((customer.id == customerId),customer.id, customerId)
-                if (customerId == customer.id) {
-                    console.log(customer.name)
-                    return customer.name
-                }
-            });
-        }
+            const customerResponse = await axios.get(`http://127.0.0.1:5000/customers`);
+            const customers = await customerResponse.data;
+            setCustomerList(customers);
+        }   
 
         try {            
-            getProductList()
-            getCustomerList()
+            getProductList();
+            getCustomerList();
         } catch (error) {
-            console.error("Problem getting Customer or Product List", error)
+            console.error("Problem getting Customer or Product List", error);
         }
 
         if (orderId) {
-            setSelectedOrder(orderId)
+            setSelectedOrder(orderId);
             async function setOrderFields(orderId) {
-                const orderResponse = await axios.get(`http://127.0.0.1:5000/orders/${orderId}`)
-                const orderData = await orderResponse.data
-                setDate(await orderData.date)
-                const customerId = await orderData.customer_id
-                setCustomer_id(await customerId)
-                setCustomerName(await getCustomerName(customerId))
+                const orderResponse = await axios.get(`http://127.0.0.1:5000/orders/${orderId}`);
+                const orderData = await orderResponse.data;
+                setDate(await orderData.date);
+                const customerId = await orderData.customer_id;
+                setCustomer_id(await customerId);
+                // Get customer name using the customer ID
+                const customerName = await getCustomerName(customerId);
+                setCustomerName(customerName);
             }
-            
+    
             try {
-                setOrderFields(orderId)
+                setOrderFields(orderId);
             } catch (error) {
-                console.error("Problem setting state variables from drilled orderId:", error)
+                console.error("Problem setting state variables from drilled orderId:", error);
             }
         }
-        console.log(customerName)
-    }, [])
+    }, [orderId, customerList]);
 
     useEffect(() => {
 
     }, [customerName])
+    
+    // Gets Customer name from Order.customer_id referenced against customerList
+    async function getCustomerName(customerId) {
+        const customer = customerList.find(customer => customer.id === customerId);
+        return customer ? customer.name : '';
+    }
 
     // const handleChange = (event) => {
     //     const {name, value} = event.target;
@@ -95,12 +93,12 @@ const OrderForm = ({ orderId }) => {
         event.preventDefault();
         const errors = validateForm();
         if (Object.keys(errors).length === 0) {
-
+    
             const orderData = {
                 "customer_id": customer_id.trim(),
                 "date": Date.now()
             }
-
+    
             const placeOrder = async () => {
                 try {
                     await axios.post('http://127.0.0.1:5000/orders', orderData)
@@ -108,34 +106,34 @@ const OrderForm = ({ orderId }) => {
                         console.log("Order Data successfully submitted", response.data);
                     })
                     .catch(error => {
-                        console.error("There was an error posting to orders from form:", error)
-                    })
-
-                    console.log("Order inserted successfully")
+                        console.error("There was an error posting to orders from form:", error);
+                    });
+    
+                    console.log("Order inserted successfully");
                 } catch (error) {
-                    console.error("Issue adding new order", error)
+                    console.error("Issue adding new order", error);
                 }    
-            }
-
+            };
+    
             const updateOrder = async () => {
                 try {
                     // Updating Order Table
-                    await axios.put(`http://127.0.0.1:5000/orders/${selectedProductId}`, orderData)
+                    await axios.put(`http://127.0.0.1:5000/orders/${selectedOrderId}`, orderData)
                     .then(response => {
                         console.log("Order Data successfully updated", response.data);
                     })
                     .catch(error => {
-                        console.error("There was an error updating orders form:", error)
-                    })
-                    
-                    console.log("Order updated successfully")
+                        console.error("There was an error updating orders form:", error);
+                    });
+    
+                    console.log("Order updated successfully");
                 } catch (error) {
-                    console.error("Issue updating order", error)
+                    console.error("Issue updating order", error);
                 } 
-            }
-
-            selectedOrderId ?  placeOrder() : updateOrder();
-            setShowSuccessModal(true)
+            };
+    
+            selectedOrderId ? updateOrder() : placeOrder();
+            setShowSuccessModal(true);
         } else {
             setErrors(errors);
         }
