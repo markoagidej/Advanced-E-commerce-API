@@ -82,7 +82,8 @@ const CustomerForm = ({ customerId }) => {
 
             const customerAccountData = {
                 "username": username.trim(),
-                "password": password.trim()
+                "password": password.trim(),
+                "customer_id" : customerId ? customerId : ""
             }
 
             const placeCustomer = async () => {
@@ -137,6 +138,9 @@ const CustomerForm = ({ customerId }) => {
                     })
         
                     // Updating Customer Account Table
+                    console.log(customerData)
+                    console.log(customerAccountData)
+                    console.log(accountId)
                     await axios.put(`http://127.0.0.1:5000/customer_accounts/${accountId}`, customerAccountData)
                     .then(response => {
                         console.log("Customer account successfully updated", response.data);

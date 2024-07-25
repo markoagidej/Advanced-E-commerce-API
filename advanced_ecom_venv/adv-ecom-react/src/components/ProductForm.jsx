@@ -91,7 +91,7 @@ const ProductForm = ({ productId }) => {
                 } 
             }
 
-            selectedProductId ?  placeProduct() : updateProduct();
+            selectedProductId ?  updateProduct() : placeProduct();
             setShowSuccessModal(true)
         } else {
             setErrors(errors);
