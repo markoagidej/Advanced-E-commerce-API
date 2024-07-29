@@ -10,6 +10,7 @@ const OrderForm = ({ orderId }) => {
     const [productList, setProductList] = useState([]);
     const [customerList, setCustomerList] = useState([]);
     const [productInOrder, setProductInOrder] = useState([]);
+    const [productSelected, setProductSelected] = useState([]);
     const [errors, setErrors] = useState({
         "customer_id": "",
         "productList": []
@@ -49,12 +50,13 @@ const OrderForm = ({ orderId }) => {
             async function setOrderFields(orderId) {
                 const orderResponse = await axios.get(`http://127.0.0.1:5000/orders/${orderId}`);
                 const orderData = await orderResponse.data;
+                console.log(orderData)
                 setDate(await orderData.date);
-                const customerId = await orderData.customer_id;
                 setCustomer_id(await orderData.customer.id);
                 // Get customer name using the customer ID
                 const customerName = await orderData.customer.name;
                 setCustomerName(customerName);
+                setProductInOrder(orderData.order_items);
             }
     
             try {
@@ -64,21 +66,6 @@ const OrderForm = ({ orderId }) => {
             }
         }
     }, [customerList])
-    
-    // Gets Customer name from Order.customer_id referenced against customerList
-    // async function getCustomerName(customerId) {
-    //     const customer = customerList.find(customer => customer.id === customerId);
-    //     return customer ? customer.name : '';
-    // }
-
-    // const handleChange = (event) => {
-    //     const {name, value} = event.target;
-    //     if (name == "date") {
-    //         setName(value)
-    //     } else if (name == "customer_id") {
-    //         setCustomer_id(value)
-    //     }
-    // }
 
     const validateForm = () => {
         const errors = {};
@@ -92,9 +79,12 @@ const OrderForm = ({ orderId }) => {
         const errors = validateForm();
         if (Object.keys(errors).length === 0) {
     
+            let orderItemString = productInOrder.join(",")
+
             const orderData = {
                 "customer_id": customer_id.trim(),
-                "date": Date.now()
+                "date": Date.now(),
+                "order_items": orderItemString
             }
     
             const placeOrder = async () => {
@@ -151,6 +141,27 @@ const OrderForm = ({ orderId }) => {
         setShowProductModal(false)
     }
 
+    const handleProductChange = (event) => {
+        setProductSelected(event.target.value)
+        console.log(productSelected)
+    }
+
+    const handleCustomerChange = (event) => {
+        setCustomer_id(event.target.value)
+        console.log(customer_id)
+    }
+
+    const addProductToOrder = () => {
+        let productCopy = productInOrder
+        productCopy.push(productSelected)
+        console.log(productInOrder)
+        setProductInOrder(productCopy)
+    }
+
+    // useEffect(() => {
+        
+    // }, [productInOrder]) 
+
     return (
         <Container>
             {selectedOrderId ? (
@@ -170,7 +181,7 @@ const OrderForm = ({ orderId }) => {
                     ) : (
                         <h3>Customer:</h3>
                     )}
-                        <Form.Select aria-label="Select Customer">
+                        <Form.Select onChange={handleCustomerChange} aria-label="Select Customer">
                             {selectedOrderId ? (
                                 <option>Change Customer</option>
                             ) : (
@@ -187,8 +198,8 @@ const OrderForm = ({ orderId }) => {
                 <br />
                 <label>
                     Products:
-                    {productInOrder.map((product, index) => (
-                        <div key={index}>{product.name}: {product.price}</div>
+                    {productInOrder.map((productId, index) => (
+                        <div key={index}>{productList.find(product => product.id === productId)}: {productList.find(product => product.id === productId)}</div>
                     ))}
                 </label>
                 <br />
@@ -205,16 +216,16 @@ const OrderForm = ({ orderId }) => {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form.Select aria-label="Select Product">
-                        <option>Select Product</option>
+                    <Form.Select onChange={handleProductChange} aria-label="Select Product">
+                        {/* <option>Select Product</option> */}
                         {productList.map((product, index) => (
                             <option key={index} value={product.id}>{product.name}: ${product.price}</option>
                         ))}
                     </Form.Select>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant='primary'>Add</Button>
-                    {/* <Button variant='primary' onClick={addProductToOrder({selector.value})}>Add</Button> */}
+                    {/* <Button variant='primary'>Add</Button> */}
+                    <Button variant='primary' onClick={addProductToOrder}>Add</Button>
                     <Button variant='danger' onClick={closeProductModal}>Close</Button>
                 </Modal.Footer>
             </Modal>

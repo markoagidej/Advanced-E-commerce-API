@@ -35,20 +35,13 @@ class ProductSchema(ma.Schema):
     class Meta:
         fields = ("name", "price", "id")
 
-# class OrderSchema(ma.Schema):
-#     customer_id = fields.Integer(required=True)
-#     date = fields.Date(required=True)
-
-#     class Meta:
-#         fields = ("customer_id", "date", "order_items", "id")
-
 class OrderSchema(ma.Schema):
     customer = fields.Nested(CustomerSchema)
     date = fields.Date(required=True)
-    order_items = fields.List(fields.Integer())
+    order_items = fields.String(required=True)
 
     class Meta:
-        fields = ("id", "customer", "date", "order_items")
+        fields = ("id", "customer_id", "date", "order_items")
 
 # Instance creation of Schemas
 customer_schema = CustomerSchema()
@@ -265,10 +258,10 @@ def place_order():
         print(f"Error: {e}")
         return jsonify(e.messages), 400
     
-    new_order = Order(customer_id=order_data['customer_id'], date=order_data['date'])
+    new_order = Order(customer_id=order_data['customer_id'], date=order_data['date'], order_items=['order_items'])
 
-    for item_id in order_data['order_items']:
-        new_order.products.append(Product.query.filter(Product.id == item_id).first())
+    # for item_id in order_data['order_items']:
+    #     new_order.products.append(Product.query.filter(Product.id == item_id).first())
     db.session.add(new_order)
     db.session.commit()
 
@@ -292,6 +285,10 @@ def track_order(id):
     orders = Order.query.filter(Order.customer_id == id).all()
     return orders_schema.jsonify(orders)
 
+
+# @app.route("/orders/form/<int:id>", methods=["GET"])
+# def getOrderProducts(id):
+#     products = Order.query(order_table).all()
 
 ## Running ----------------------------------------------------------------------------------------------------------------------------
 # Creates database structure if it doesnt already exist
